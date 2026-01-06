@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="zh"><head><base href="https://puaish.github.io/"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Halcon 图像插值 - Lord 博客</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="Lord"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Lord"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="Halcon图像插值：大白话详解在Halcon处理图像时，经常会遇到图像放大、缩小、旋转等操作，而“插值”就是这些操作背后的核心逻辑之一。很多刚接触的朋友觉得这是专业术语，其实用大白话就能轻松理解，这篇文章就带你用最简单的方式搞懂它。"><meta property="og:type" content="article"><meta property="og:title" content="Halcon 图像插值"><meta property="og:url" content="https://puaish.github.io/2026/01/03/Halcon-%E5%9B%BE%E5%83%8F%E6%8F%92%E5%80%BC/"><meta property="og:site_name" content="Lord 博客"><meta property="og:description" content="Halcon图像插值：大白话详解在Halcon处理图像时，经常会遇到图像放大、缩小、旋转等操作，而“插值”就是这些操作背后的核心逻辑之一。很多刚接触的朋友觉得这是专业术语，其实用大白话就能轻松理解，这篇文章就带你用最简单的方式搞懂它。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="https://puaish.github.io/img/og_image.png"><meta property="article:published_time" content="2026-01-03T02:26:56.000Z"><meta property="article:modified_time" content="2026-01-05T15:14:58.366Z"><meta property="article:author" content="Lord"><meta property="article:tag" content="机器视觉"><meta property="article:tag" content="Halcon"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="https://puaish.github.io/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"https://puaish.github.io/2026/01/03/Halcon-%E5%9B%BE%E5%83%8F%E6%8F%92%E5%80%BC/"},"headline":"Halcon 图像插值","image":["https://puaish.github.io/img/og_image.png"],"datePublished":"2026-01-03T02:26:56.000Z","dateModified":"2026-01-05T15:14:58.366Z","author":{"@type":"Person","name":"Lord"},"publisher":{"@type":"Organization","name":"Lord 博客","logo":{"@type":"ImageObject","url":"https://puaish.github.io/img/favicon.svg"}},"description":"Halcon图像插值：大白话详解在Halcon处理图像时，经常会遇到图像放大、缩小、旋转等操作，而“插值”就是这些操作背后的核心逻辑之一。很多刚接触的朋友觉得这是专业术语，其实用大白话就能轻松理解，这篇文章就带你用最简单的方式搞懂它。"}</script><link rel="canonical" href="https://puaish.github.io/2026/01/03/Halcon-%E5%9B%BE%E5%83%8F%E6%8F%92%E5%80%BC/"><link rel="icon" href="https://puaish.github.io/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="https://puaish.github.io/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/favicon.svg" alt="Lord 博客" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">首页</a><a class="navbar-item" href="/archives/">列表</a><a class="navbar-item" href="/categories/">分类</a><a class="navbar-item" href="/tags/">标签</a><a class="navbar-item" href="/about/">关于</a><a class="navbar-item" href="/%5Bobject%20Object%5D">links</a></div><div class="navbar-end"><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2026-01-03T02:26:56.000Z" title="2026/1/3上午10:26:56">2026-01-03</time>发表</span><span class="level-item"><time dateTime="2026-01-05T15:14:58.366Z" title="2026/1/5下午11:14:58">2026-01-05</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/Halcon/">Halcon</a></span><span class="level-item">11 分钟读完 (大约1722个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">Halcon 图像插值</h1><div class="content"><h2 id="Halcon图像插值：大白话详解"><a href="#Halcon图像插值：大白话详解" class="headerlink" title="Halcon图像插值：大白话详解"></a>Halcon图像插值：大白话详解</h2><p>在Halcon处理图像时，经常会遇到图像放大、缩小、旋转等操作，而“插值”就是这些操作背后的核心逻辑之一。很多刚接触的朋友觉得这是专业术语，其实用大白话就能轻松理解，这篇文章就带你用最简单的方式搞懂它。</p>
+<span id="more"></span>
+<h2 id="一、先搞懂：什么是图像插值？"><a href="#一、先搞懂：什么是图像插值？" class="headerlink" title="一、先搞懂：什么是图像插值？"></a>一、先搞懂：什么是图像插值？</h2><p>图像是由一个个“像素格子”组成的，每个格子里都有一个固定的数值（比如亮度、颜色）。</p>
+<p>当你对图像做<strong>放大&#x2F;缩小、旋转、平移</strong> 时，新图像的很多像素位置，在原图像里根本找不到对应的“现成像素”——就像把一张格子纸拉大，中间会空出很多空格子。</p>
+<p>而 <strong>插值</strong>，本质就是：<br>给这些“空出来的格子”，通过周围已有的像素数值，合理估算出该填的数值。<br>核心就是「缺啥补啥，补得尽量自然」。</p>
+<h3 id="举个生活例子"><a href="#举个生活例子" class="headerlink" title="举个生活例子"></a>举个生活例子</h3><p>你有一张写满数字的格子纸，现在要把它放大一倍。原来的格子变稀了，中间空出很多新格子。插值就相当于按一定规则，算出这些空格子该填的数字，让放大后的纸看起来不“断层”、不“马赛克”。</p>
+<h2 id="二、为什么必须要插值？"><a href="#二、为什么必须要插值？" class="headerlink" title="二、为什么必须要插值？"></a>二、为什么必须要插值？</h2><p>图像的像素是“离散的”（一格一格固定位置），比如100×100的图像，只有10000个固定像素点。但只要做几何变换，新像素位置几乎不可能和原像素位置完全对齐：</p>
+<ul>
+<li><p>比如把图像放大2倍，新图像的(1.5,1.5)位置，原图像根本没有这个坐标的像素；</p>
+</li>
+<li><p>比如把图像旋转10°，原图像的像素点会偏移到新图像的“半格”位置。</p>
+</li>
+</ul>
+<p>如果不插值，变换后的图像会全是锯齿、黑块，根本没法用。</p>
+<h2 id="三、Halcon里常见的4种插值方式（大白话版）"><a href="#三、Halcon里常见的4种插值方式（大白话版）" class="headerlink" title="三、Halcon里常见的4种插值方式（大白话版）"></a>三、Halcon里常见的4种插值方式（大白话版）</h2><p>Halcon的几何变换算子（比如<code>zoom_image_size</code> 缩放、<code>affine_trans_image</code> 仿射、<code>rotate_image</code> 旋转），都有一个 <code>Interpolation</code> 参数，就是用来选择插值方式的。常见的有4种，对应不同的需求：</p>
+<h3 id="1-最近邻插值（nearest-neighbor）——-懒汉式方案"><a href="#1-最近邻插值（nearest-neighbor）——-懒汉式方案" class="headerlink" title="1. 最近邻插值（nearest_neighbor）—— 懒汉式方案"></a>1. 最近邻插值（nearest_neighbor）—— 懒汉式方案</h3><ul>
+<li><p><strong>规则</strong>：找离目标位置最近的原像素，直接抄它的数值；</p>
+</li>
+<li><p><strong>大白话</strong>：新位置缺值？看旁边哪个像素离我最近，就用它的数，不做任何复杂计算；</p>
+</li>
+<li><p><strong>特点</strong>：计算最快，但效果最差——放大后有明显“马赛克锯齿”，旋转后边缘全是台阶；</p>
+</li>
+<li><p><strong>适用场景</strong>：只追求速度，不在乎画质（比如实时预览、低精度识别）。</p>
+</li>
+</ul>
+<h3 id="2-双线性插值（bilinear）——-均衡方案（默认）"><a href="#2-双线性插值（bilinear）——-均衡方案（默认）" class="headerlink" title="2. 双线性插值（bilinear）—— 均衡方案（默认）"></a>2. 双线性插值（bilinear）—— 均衡方案（默认）</h3><ul>
+<li><p><strong>规则</strong>：找目标位置周围4个最近的原像素，按“距离远近”加权平均（离得越近，权重越大）；</p>
+</li>
+<li><p><strong>大白话</strong>：不只用最近的1个，而是找上下左右4个邻居，离我近的邻居“话语权”大，远的小，算个平均分；</p>
+</li>
+<li><p><strong>特点</strong>：速度中等，效果比最近邻好很多，边缘平滑无锯齿，是Halcon默认的插值方式；</p>
+</li>
+<li><p><strong>适用场景</strong>：绝大多数常规场景（缩放、旋转、仿射变换），兼顾速度和画质。</p>
+</li>
+</ul>
+<h3 id="3-双三次插值（bicubic）——-精细方案"><a href="#3-双三次插值（bicubic）——-精细方案" class="headerlink" title="3. 双三次插值（bicubic）—— 精细方案"></a>3. 双三次插值（bicubic）—— 精细方案</h3><ul>
+<li><p><strong>规则</strong>：找目标位置周围16个最近的原像素，按更复杂的公式加权计算（不仅看距离，还考虑像素值的渐变趋势）；</p>
+</li>
+<li><p><strong>大白话</strong>：找16个邻居，不仅算距离，还看这些邻居的数值变化规律，算出更贴合原图纹理的新值；</p>
+</li>
+<li><p><strong>特点</strong>：计算最慢，但效果最好——放大后图像更细腻，边缘无模糊，旋转后细节保留最完整；</p>
+</li>
+<li><p><strong>适用场景</strong>：高精度要求（比如尺寸测量、精细纹理匹配），不在乎计算时间。</p>
+</li>
+</ul>
+<h3 id="4-超线性插值（superlinear）——-折中方案"><a href="#4-超线性插值（superlinear）——-折中方案" class="headerlink" title="4. 超线性插值（superlinear）—— 折中方案"></a>4. 超线性插值（superlinear）—— 折中方案</h3><ul>
+<li><p><strong>规则</strong>：介于双线性和双三次之间，用8个邻居计算；</p>
+</li>
+<li><p><strong>大白话</strong>：比双线性多找4个邻居，计算比双三次简单，效果比双线性好一点；</p>
+</li>
+<li><p><strong>特点</strong>：速度比双三次快，效果比双线性稍优；</p>
+</li>
+<li><p><strong>适用场景</strong>：想比双线性效果好，又不想用双三次那么慢的场景。</p>
+</li>
+</ul>
+<h2 id="四、Halcon实操示例（缩放对比）"><a href="#四、Halcon实操示例（缩放对比）" class="headerlink" title="四、Halcon实操示例（缩放对比）"></a>四、Halcon实操示例（缩放对比）</h2><p>以“图像放大”为例，直接看代码对比不同插值的效果，复制到Halcon里就能运行：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">* 读取图像</span><br><span class="line">read_image(Image, &#x27;test.png&#x27;)  // 替换成你的图像路径</span><br><span class="line"></span><br><span class="line">* 1. 最近邻插值：放大2倍（快但锯齿）</span><br><span class="line">zoom_image_size(Image, ImageZoomNearest, 800, 600, &#x27;nearest_neighbor&#x27;)</span><br><span class="line"></span><br><span class="line">* 2. 双线性插值：放大2倍（默认，均衡）</span><br><span class="line">zoom_image_size(Image, ImageZoomBilinear, 800, 600, &#x27;bilinear&#x27;)</span><br><span class="line"></span><br><span class="line">* 3. 双三次插值：放大2倍（慢但细腻）</span><br><span class="line">zoom_image_size(Image, ImageZoomBicubic, 800, 600, &#x27;bicubic&#x27;)</span><br><span class="line"></span><br><span class="line">* 显示对比（打开Halcon可视化窗口即可看到差异）</span><br><span class="line">dev_display(ImageZoomNearest)  // 马赛克明显</span><br><span class="line">dev_display(ImageZoomBilinear) // 平滑无锯齿</span><br><span class="line">dev_display(ImageZoomBicubic)  // 细节最清晰</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="五、总结：怎么选插值方式？"><a href="#五、总结：怎么选插值方式？" class="headerlink" title="五、总结：怎么选插值方式？"></a>五、总结：怎么选插值方式？</h2><p>用一张表格快速对应需求：</p>
+<table>
+<thead>
+<tr>
+<th>插值方式</th>
+<th>速度</th>
+<th>效果</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nearest_neighbor（最近邻）</td>
+<td>最快</td>
+<td>最差（锯齿）</td>
+<td>实时预览、低精度识别</td>
+</tr>
+<tr>
+<td>bilinear（双线性）</td>
+<td>中等</td>
+<td>中等（平滑）</td>
+<td>常规识别、定位（默认首选）</td>
+</tr>
+<tr>
+<td>bicubic（双三次）</td>
+<td>最慢</td>
+<td>最好（细腻）</td>
+<td>尺寸测量、精细纹理匹配</td>
+</tr>
+<tr>
+<td>superlinear（超线性）</td>
+<td>中快</td>
+<td>中优</td>
+<td>双线性与双三次的折中需求</td>
+</tr>
+</tbody></table>
+<h3 id="实用建议"><a href="#实用建议" class="headerlink" title="实用建议"></a>实用建议</h3><ol>
+<li>日常处理：直接用默认的 <code>bilinear</code> 即可，兼顾速度和效果；</li>
+<li>实时性要求高（比如每秒处理30帧以上）：选 <code>nearest_neighbor</code>；</li>
+<li>涉及精度测量、精细匹配：选 <code>bicubic</code>，哪怕慢一点，精度更重要。</li>
+</ol>
+<p>到这里，Halcon图像插值的核心逻辑就讲完了。其实不用纠结复杂的数学公式，记住「缺啥补啥」的核心，再根据速度和效果需求选对应的插值方式，就能轻松应对大部分场景～</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>Halcon 图像插值</p><p><a href="https://puaish.github.io/2026/01/03/Halcon-图像插值/">https://puaish.github.io/2026/01/03/Halcon-图像插值/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>Lord</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2026-01-03</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2026-01-05</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/">机器视觉</a><a class="link-muted mr-2" rel="tag" href="/tags/Halcon/">Halcon</a></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2026/01/03/%E6%B5%8B%E8%AF%95%E9%A1%B5%E9%9D%A2/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">测试页面</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2026/01/01/hello-world/"><span class="level-item">Hello World</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card" id="comments"><div class="card-content"><h3 class="title is-5">评论</h3><div class="content twikoo" id="twikoo"></div><script src="https://cdn.jsdelivr.net/npm/twikoo@1.6.30/dist/twikoo.all.min.js"></script><script>twikoo.init({
+            envId: 'undefined',
+            
+            lang: "zh-CN",
+        });</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1"><div class="card widget" data-type="profile"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar is-rounded" src="/img/avatar.png" alt="Lord"></figure><p class="title is-size-4 is-block" style="line-height:inherit;">Lord</p><p class="is-size-6 is-block">A Coder</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>Chain</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">文章</p><a href="/archives/"><p class="title">3</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">分类</p><a href="/categories/"><p class="title">1</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">标签</p><a href="/tags/"><p class="title">2</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="me noopener">关注我</a></div><div class="level is-mobile is-multiline"><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="Github" href="https://github.com/ppoffice"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="Twitter" href="https://twitter.com"><i class="fab fa-twitter"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="Dribbble" href="https://dribbble.com"><i class="fab fa-dribbble"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="me noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget" data-type="archives"><div class="card-content"><div class="menu"><h3 class="menu-label">归档</h3><ul class="menu-list"><li><a class="level is-mobile" href="/archives/2026/01/"><span class="level-start"><span class="level-item">一月 2026</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li></ul></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">订阅更新</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="card widget" data-type="subscribe-email"><div class="card-content"><div class="menu"><h3 class="menu-label">follow.it</h3><form action="" method="post" target="_blank"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button" type="submit" value="订阅"></div></div></form></div></div></div><div class="column-right-shadow is-hidden-widescreen is-sticky"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3 is-sticky"><div class="card widget" data-type="links"><div class="card-content"><div class="menu"><h3 class="menu-label">链接</h3><ul class="menu-list"><li><a class="level is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget" data-type="categories"><div class="card-content"><div class="menu"><h3 class="menu-label">分类</h3><ul class="menu-list"><li><a class="level is-mobile" href="/categories/Halcon/"><span class="level-start"><span class="level-item">Halcon</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div><div class="card widget" data-type="recent-posts"><div class="card-content"><h3 class="menu-label">最新文章</h3><article class="media"><div class="media-content"><p class="date"><time dateTime="2026-01-03T03:17:35.000Z">2026-01-03</time></p><p class="title"><a href="/2026/01/03/%E6%B5%8B%E8%AF%95%E9%A1%B5%E9%9D%A2/">测试页面</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2026-01-03T02:26:56.000Z">2026-01-03</time></p><p class="title"><a href="/2026/01/03/Halcon-%E5%9B%BE%E5%83%8F%E6%8F%92%E5%80%BC/">Halcon 图像插值</a></p><p class="categories"><a href="/categories/Halcon/">Halcon</a></p></div></article><article class="media"><div class="media-content"><p class="date"><time dateTime="2025-12-31T17:52:24.035Z">2026-01-01</time></p><p class="title"><a href="/2026/01/01/hello-world/">Hello World</a></p></div></article></div></div><div class="card widget" data-type="tags"><div class="card-content"><div class="menu"><h3 class="menu-label">标签</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Halcon/"><span class="tag">Halcon</span><span class="tag">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%9C%BA%E5%99%A8%E8%A7%86%E8%A7%89/"><span class="tag">机器视觉</span><span class="tag">1</span></a></div></div></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/favicon.svg" alt="Lord 博客" height="28"></a><p class="is-size-7"><span>&copy; 2026 Lord</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p><p class="is-size-7">© 2025</p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><!--!--><!--!--><script data-pjax src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="/js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
